@@ -1,4 +1,23 @@
-<h1>
-  {{title}}
-</h1>
+<div class="page" *ngIf="listOfStrBoard">
+  <h2>Mars Rover</h2>
+  <div >
+    <table>
+      <thead>
+        <tr>
+          <th></th> <th></th> <th></th> <th></th> <th></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let row of listOfStrBoard">
+            <td>{{row[0]}}</td> <td>{{row[1]}}</td> <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td> <td>{{row[4]}}</td>
+          </tr>
+      </tbody>
+      <tfoot> </tfoot>
+    </table>
+  </div>
+
+</div>
+
+
 <router-outlet></router-outlet>
