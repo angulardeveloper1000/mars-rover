@@ -3,9 +3,6 @@
   <div >
     <table>
       <thead>
-        <tr>
-          <th></th> <th></th> <th></th> <th></th> <th></th>
-        </tr>
       </thead>
       <tbody>
           <tr *ngFor="let row of listOfStrBoard">
@@ -19,5 +16,19 @@
 
 </div>
 
+<div class="page" *ngIf="listOfObstacles">
+  <h2>Rover Moves and Obstacles</h2>
+  <div >
+    <table>
+      <tbody>
+          <tr id="obstacles" *ngFor="let obstacle of listOfObstacles">
+            <td>{{obstacle}}</td> 
+          </tr>
+      </tbody>
+      <tfoot> </tfoot>
+    </table>
+  </div>
+
+</div>
 
 <router-outlet></router-outlet>

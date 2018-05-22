@@ -14,3 +14,10 @@ td {
     text-align: center;
     background-color: cornflowerblue;
 }
+
+#obstacles {
+    tr, td {
+        background-color: orange;
+        height: 15px; 
+    } 
+}

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   
   listOfStrBoard: Array<string> = new Array<string>();
   roverXhistory: Array<number> = new Array<number>();
@@ -37,11 +37,15 @@ export class AppComponent {
     this.placeRoverOnBoard();
   }
 
+  ngOnInit() {
+
+  }
   ngAfterViewInit() {
     setInterval(() => {
       console.log('Firing again... Number of Commands left: ' + this.arrOfCommands);
       if (this.arrOfCommands.length > 0) { // Handle only if commands exists.
         this.getNextCommand();
+        this.executeNextCommand();
       }
     }, 3570);
   }
@@ -113,7 +117,7 @@ export class AppComponent {
       this.moveRoverTo(row, col);
       this.reportSuccessfulMove(row, col);
     } else {
-      
+      this.reportTheObstacle(row, col);
     }
   }
 
@@ -122,6 +126,10 @@ export class AppComponent {
   }
 
   moveRoverTo(row: number, col: number) {
+    this.removeRoverFrom(this.roverXhistory[this.roverXhistory.length - 2]
+      , this.roverYhistory[this.roverYhistory.length - 2]); // remove rover from previous position
+    this.reportRemoveRover(this.roverXhistory[this.roverXhistory.length - 2]
+      , this.roverYhistory[this.roverYhistory.length - 2]);
     let start_index = this.getLastX();
     let removeNumberOfItems = 1;
     let rowString = this.listOfStrBoard[this.getLastX()];
@@ -132,7 +140,29 @@ export class AppComponent {
     this.listOfStrBoard.splice(start_index, removeNumberOfItems, rowStrModified);
   }
 
+  removeRoverFrom(row: number, col: number) {
+    let start_index = row;
+    let removeNumberOfItems = 1;
+    let rowString = this.listOfStrBoard[row];
+    let rowStringArr = rowString.split('');
+    rowStringArr[col] = ' ';
+    // Move the 'r' here. By default the Array.toString() uses comma as its delimiter, instead
+    let rowStrModified = rowStringArr.join(''); //  use .join("") to pass in your own chosen delimiter.
+    this.listOfStrBoard.splice(start_index, removeNumberOfItems, rowStrModified);
+  }
 
+  reportTheObstacle(row: number, col: number) {
+    const message = `During command ${this.currentCommand} obstacle '${this.listOfStrBoard[row][col]}' was at location [${row}][${col}]`;
+    this.listOfObstacles.push(message);
+    // Since the rover cannot move here, then remove the x and y from history
+    this.roverXhistory.pop();
+    this.roverYhistory.pop();
+  }
+
+  reportRemoveRover(row: number, col: number) {
+    const message = `Removing rover from [${row}][${col}]`;
+    this.listOfObstacles.push(message);
+  }
 
 
 } // end class AppComponent
