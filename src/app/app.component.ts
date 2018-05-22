@@ -11,6 +11,8 @@ export class AppComponent {
   roverXhistory: Array<number> = new Array<number>();
   roverYhistory: Array<number> = new Array<number>();
   arrOfCommands: Array<string> = new Array<string>();
+  listOfObstacles: Array<string> = new Array<string>();
+  currentCommand: string = null;
 
   constructor() {
     // Command data
@@ -32,14 +34,105 @@ export class AppComponent {
     this.listOfStrBoard.push('   O ');
     this.listOfStrBoard.push('    Q');
 
+    this.placeRoverOnBoard();
   }
 
   ngAfterViewInit() {
     setInterval(() => {
       console.log('Firing again... Number of Commands left: ' + this.arrOfCommands);
       if (this.arrOfCommands.length > 0) { // Handle only if commands exists.
+        this.getNextCommand();
       }
     }, 3570);
   }
+  
+  placeRoverOnBoard() {
+    let start_index = this.getLastX();
+    let removeNumberOfItems = 1;
+    let rowString = this.listOfStrBoard[this.getLastX()];
+    let rowStringArr = rowString.split('');
+    // Move the 'r' here. By default the Array.toString() uses comma as its delimiter, instead use .join("")
+    rowStringArr[this.getLastY()] = 'r'; // to pass in your own chosen delimiter.
+    let rowStrModified = rowStringArr.join('');
+    this.listOfStrBoard.splice(start_index, removeNumberOfItems, rowStrModified);
+    this.reportSuccessfulMove(this.getLastX(), this.getLastY());
+  }
+  reportSuccessfulMove(row: number, col: number) {
+    const message = `Successful command ${this.currentCommand} moved rover to [${row}][${col}] `;
+    this.listOfObstacles.push(message);
+  }
+  getLastX() {
+    return this.roverXhistory[this.roverXhistory.length - 1];
+  }
+  getLastY() {
+    return this.roverYhistory[this.roverYhistory.length - 1];
+  }
+  getNextCommand() {
+    let nextCommand: string = this.currentCommand = this.arrOfCommands.pop(); // Pop off and return 1st character
+    let newX, deltaX: number;
+    let newY, deltaY: number;
+
+    switch (nextCommand) {
+      case 'W': { // This was N
+        deltaX = 0;
+        deltaY = 1;
+        break;
+      }
+      case 'E': { // This was S
+        deltaX = 0;
+        deltaY = -1;
+        break;
+      }
+      case 'S': { // This was E
+        deltaX = 1;
+        deltaY = 0;
+        break;
+      }
+      case 'N': { // This was W
+        deltaX = -1;
+        deltaY = 0;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    newX = deltaX + this.getLastX();
+    newY = deltaY + this.getLastY();
+    console.log('current   X = ' + this.getLastX() + ' Y = ' + this.getLastY());
+    this.roverXhistory.push(newX);
+    this.roverYhistory.push(newY);
+    console.log('nextCommand = ' + nextCommand + ' X = ' + newX + ' Y = ' + newY);
+  }
+
+  executeNextCommand() {
+    let row: number = this.getLastX();
+    let col: number = this.getLastY();
+    if (this.isArrayEmptyAt(row, col)) {
+      this.moveRoverTo(row, col);
+      this.reportSuccessfulMove(row, col);
+    } else {
+      
+    }
+  }
+
+  isArrayEmptyAt(row: number, col: number) {
+    return this.listOfStrBoard[row][col] === ' ';
+  }
+
+  moveRoverTo(row: number, col: number) {
+    let start_index = this.getLastX();
+    let removeNumberOfItems = 1;
+    let rowString = this.listOfStrBoard[this.getLastX()];
+    let rowStringArr = rowString.split('');
+    // Move the 'r' here. By default the Array.toString() uses comma as its delimiter, instead
+    rowStringArr[this.getLastY()] = 'r'; //  use .join("") to pass in your own chosen delimiter.
+    let rowStrModified = rowStringArr.join('');
+    this.listOfStrBoard.splice(start_index, removeNumberOfItems, rowStrModified);
+  }
+
+
+
 
 } // end class AppComponent
